@@ -1,3 +1,5 @@
+import random
+
 WIDTH = 21
 HEIGHT = 19
 ENTRY = 0,0
@@ -47,24 +49,25 @@ class Grid:
         row = []
         for v in array:
                 if v & 1 or v == 16:
-                    row.extend(["+", "━━━━"])
+                    row.extend(["███████"])
                 else:
-                    row.extend(["+", "   "])
-        row.extend(["+", "\n"])
-        for v in array:
-            if v & 8 or v == 16:
-                if v == 16:
-                    row.extend(["┃", " ██ "]) 
+                    row.extend(["██", "     "])
+        row.extend(["██", "\n"])
+        for x in range(2):
+            for v in array:
+                if v & 8 or v == 16:
+                    if v == 16:
+                        row.extend(["███████"]) 
+                    else:
+                        row.extend(["██", "     "])
                 else:
-                    row.extend(["┃", "    "])
-            else:
-                row.extend([" ", "   "])
-        row.extend(["┃", "\n"])
+                    row.extend(["       "])
+            row.extend(["██", "\n"])
         if i == (high - 1): 
             for v in array:
                 if v & 4:
-                    row.extend(["+", "━━━━"])
-            row.extend(["+", "\n"])
+                    row.extend(["███████"])
+            row.extend(["██", "\n"])
         return(row)
 
 
@@ -74,14 +77,37 @@ class Grid:
             visual.extend(self.r_row(array, self.height, i))
         return visual
             
-## class Engine:
-##     def __init__(slef, grid, entry, exitt):
+class Engine:
+    def __init__(self, grid):
+        self.maze = grid
 
-
+    def dfs(self, y, x):
+        moves = [(-1, 0, 1), (0, 1, 2), (0, -1, 8), (1, 0, 4)]
+        random.shuffle(moves)
+        for move in moves:
+            yy = move[0]
+            xx = move[1]
+            wall = move[2]
+            yyy = y + yy
+            xxx = x + xx
+            if 0 <= xxx < self.maze.width and 0 <= yyy < self.maze.height:
+                if self.maze.grid[yyy][xxx] == 15:
+                    self.maze.grid[y][x] -= wall
+                    if wall == 1:
+                        self.maze.grid[yyy][xxx] -= 4
+                    elif wall == 2:
+                        self.maze.grid[yyy][xxx] -= 8
+                    elif wall == 4:
+                        self.maze.grid[yyy][xxx] -= 1
+                    elif wall == 8:
+                        self.maze.grid[yyy][xxx] -= 2
+                    self.dfs(yyy, xxx)
 
 def main():
     grid = Grid(HEIGHT, WIDTH)
     grid.make_42()
+    engine = Engine(grid)
+    engine.dfs(0, 0)
     lst = grid.print_maze()
     for x in lst:
         print(x, end="")
