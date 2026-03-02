@@ -1,7 +1,7 @@
 import random
 
-WIDTH = 9
-HEIGHT = 7
+WIDTH = 23
+HEIGHT = 21
 ENTRY = 0,0
 EXIT = 19,14
 PERFECT = True
@@ -63,7 +63,8 @@ class Grid:
             for v in array:
                 if v & 8 or v == 16:
                     if v == 16:
-                        row.extend(["███████"]) 
+
+                        row.extend(["██", "\033[90m█████\033[0m"]) 
                     else:
                         row.extend(["██", "     "])
                 else:
